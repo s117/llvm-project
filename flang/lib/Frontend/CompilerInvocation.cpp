@@ -302,6 +302,10 @@ static void parseCodeGenArgs(Fortran::frontend::CodeGenOptions &opts,
 
   opts.AliasAnalysis = opts.OptimizationLevel > 0;
 
+  if (args.hasFlag(clang::options::OPT_fbasic_block_address_map,
+                   clang::options::OPT_fno_basic_block_address_map, false))
+    opts.BBAddrMap = 1;
+
   // -mframe-pointer=none/non-leaf/reserved/all option.
   if (const llvm::opt::Arg *a =
           args.getLastArg(clang::options::OPT_mframe_pointer_EQ)) {

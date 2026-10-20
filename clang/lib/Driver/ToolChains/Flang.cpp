@@ -220,6 +220,36 @@ void Flang::addCodegenOptions(const ArgList &Args,
   if (shouldLoopVersion(Args))
     CmdArgs.push_back("-fversion-loops-for-stride");
 
+  // The basic block address map, as clang does it: -fbasic-block-address-map
+  // where clang allows it, and the deprecated -fbasic-block-sections=labels
+  // everywhere.
+  const Driver &D = getToolChain().getDriver();
+  const llvm::Triple &Triple = getToolChain().getEffectiveTriple();
+  if (Arg *A = Args.getLastArg(options::OPT_fbasic_block_address_map,
+                               options::OPT_fno_basic_block_address_map)) {
+    if ((Triple.isX86() || Triple.isAArch64()) && Triple.isOSBinFormatELF()) {
+      if (A->getOption().matches(options::OPT_fbasic_block_address_map))
+        A->render(Args, CmdArgs);
+    } else {
+      D.Diag(diag::err_drv_unsupported_opt_for_target)
+          << A->getAsString(Args) << Triple.str();
+    }
+  }
+  if (Arg *A = Args.getLastArg(options::OPT_fbasic_block_sections_EQ)) {
+    StringRef Val = A->getValue();
+    if (Val == "labels") {
+      D.Diag(diag::warn_drv_deprecated_arg)
+          << A->getAsString(Args) << /*hasReplacement=*/true
+          << "-fbasic-block-address-map";
+      CmdArgs.push_back("-fbasic-block-address-map");
+    } else if (Val != "none") {
+      // flang has no basic block sections, only the address map ("labels").
+      // "none" is allowed, as in clang, to override an earlier value.
+      D.Diag(diag::err_drv_unsupported_option_argument)
+          << A->getSpelling() << Val;
+    }
+  }
+
   for (const auto &arg :
        Args.getAllArgValues(options::OPT_frepack_arrays_contiguity_EQ))
     if (arg != "whole" && arg != "innermost") {

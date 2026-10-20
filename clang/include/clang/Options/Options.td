@@ -4598,10 +4598,11 @@ defm function_sections : BoolFOption<"function-sections",
   NegFlag<SetFalse>>;
 defm basic_block_address_map : BoolFOption<"basic-block-address-map",
   CodeGenOpts<"BBAddrMap">, DefaultFalse,
-  PosFlag<SetTrue, [], [CC1Option], "Emit the basic block address map section.">,
-  NegFlag<SetFalse>>;
+  PosFlag<SetTrue, [], [CC1Option, FC1Option],
+          "Emit the basic block address map section.">,
+  NegFlag<SetFalse>, BothFlags<[], [ClangOption, FlangOption]>>;
 def fbasic_block_sections_EQ : Joined<["-"], "fbasic-block-sections=">, Group<f_Group>,
-  Visibility<[ClangOption, CC1Option, CC1AsOption]>,
+  Visibility<[ClangOption, CC1Option, CC1AsOption, FlangOption]>,
   HelpText<"Place each function's basic blocks in unique sections (ELF Only)">,
   DocBrief<[{Place each basic block or a subset of basic blocks in its own section.}]>,
   Values<"all,none,list=">,

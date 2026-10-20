@@ -48,6 +48,7 @@ CODEGENOPT(FuseLoops, 1, 0) ///< Enable loop fusion.
 CODEGENOPT(LoopVersioning, 1, 0) ///< Enable loop versioning.
 CODEGENOPT(UnrollLoops, 1, 0) ///< Enable loop unrolling
 CODEGENOPT(AliasAnalysis, 1, 0) ///< Enable alias analysis pass
+CODEGENOPT(BBAddrMap, 1, 0) ///< Emit the basic block address map section.
 CODEGENOPT(DwarfVersion, 3, 0) ///< Dwarf version
 
 CODEGENOPT(Underscoring, 1, 1)
